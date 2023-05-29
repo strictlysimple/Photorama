@@ -13,11 +13,19 @@ enum EndPoint: String {
 }
 
 struct FlickrResponse: Codable {
-    let photos: FlickrPhotoResponse
+    let photosInfo: FlickrPhotoResponse
+    
+    enum CodingKeys: String, CodingKey {
+        case photosInfo = "photos"
+    }
 }
 
 struct FlickrPhotoResponse: Codable {
-    let photo: [Photo]
+    let photos: [Photo]
+    
+    enum CodingKeys: String, CodingKey {
+        case photos = "photo"
+    }
 }
 
 struct FlickrAPI {
@@ -57,6 +65,16 @@ struct FlickrAPI {
     
     static var interestingPhotosURL: URL {
         return flickrURL(endPoint: .interestingPhotos, parameters: ["extras": "url_z,date_taken"])
+    }
+    
+    static func photos(fromJSON data: Data) -> Result<[Photo], Error> {
+        do {
+            let decoder = JSONDecoder()
+            let flickrResponse = try decoder.decode(FlickrResponse.self, from: data)
+            return .success(flickrResponse.photosInfo.photos)
+        } catch {
+            return .failure(error)
+        }
     }
 }
 
