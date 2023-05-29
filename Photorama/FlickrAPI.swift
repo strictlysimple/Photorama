@@ -12,6 +12,14 @@ enum EndPoint: String {
     case interestingPhotos = "flickr.interestingness.getList"
 }
 
+struct FlickrResponse: Codable {
+    let photos: FlickrPhotoResponse
+}
+
+struct FlickrPhotoResponse: Codable {
+    let photo: [Photo]
+}
+
 struct FlickrAPI {
     
     private static let baseURLString = "https://api.flickr.com/services/rest"
